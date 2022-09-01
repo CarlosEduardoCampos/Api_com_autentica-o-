@@ -33,9 +33,19 @@ class Atividades(Base):
     __tablename__ = 'atividades'
     id = Column(Integer, primary_key=True)
     titulo = Column(String(80))
-    criacao = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     pessoa_id = Column(Integer, ForeignKey('pessoas.id'))
     pessoa = relationship("Pessoas")
+
+    def __repr__(self):
+        return f'< Atividade -> {self.titulo} >'
+
+    def save(self):
+        db_session.add(self)
+        db_session.commit()
+
+    def delete(self):
+        db_session.delete(self)
+        db_session.commit()
 
 
 def init_db():
