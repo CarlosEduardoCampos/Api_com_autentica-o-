@@ -29,6 +29,27 @@ class Pessoas(Base):
         db_session.commit()
 
 
+class Usuarios(Base):
+    __tablename__='usuarios'
+    id = Column(Integer, primary_key=True)
+    nivel = Column(Integer)
+    login = Column(String(40), unique=True)
+    senha = Column(String(300))
+    pessoa_id = Column(Integer, ForeignKey('pessoas.id'))
+    pessoa = relationship("Pessoas")
+
+    def __repr__(self):
+        return f'< Login -> {self.login} >'
+
+    def save(self):
+        db_session.add(self)
+        db_session.commit()
+
+    def delete(self):
+        db_session.delete(self)
+        db_session.commit()
+
+
 class Atividades(Base):
     __tablename__ = 'atividades'
     id = Column(Integer, primary_key=True)
@@ -50,6 +71,10 @@ class Atividades(Base):
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+
+def delete_db():
+    Base.metadata.delete_all(bind=engine)
 
 
 if __name__ == '__main__':
