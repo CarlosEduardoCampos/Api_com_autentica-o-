@@ -28,6 +28,7 @@ def verificacao(login, senha):
 
     return Usuarios.query.filter_by(login=login, senha=senha).first()
 
+
 class Usuario(Resource):
     # Editar um usuario
     @auth.login_required
@@ -75,11 +76,19 @@ class ListaUsuarios(Resource):
     def get(self):
         user = Usuarios.query.all()
 
-        response = [{
-            "id": i.id,
-            "nivel": i.nivel,
-            "login": i.login,
-        } for i in user]
+        try:
+            response = [{
+                "id": i.id,
+                "nivel": i.nivel,
+                "login": i.login,
+                "senha": i.senha
+            } for i in user]
+
+        except AttributeError:
+            response = {
+                'status': 'error',
+                'mensagem': 'Pessoa não encontrada'
+            }
 
         return response
 
@@ -129,6 +138,7 @@ class Pessoa(Resource):
     # Edita o nome ou idade da pessoa que possua o id passado
     @auth.login_required
     def put(self, id):
+
         pessoa = Pessoas.query.filter_by(id=id).first()
         dados = request.json
 
@@ -228,7 +238,7 @@ class ListaAtividades(Resource):
         atividade.save()
 
         response = {
-            'pessoa_id': atividade.pessoa.nome,
+            'pessoa_nome': atividade.pessoa.nome,
             'titulo': atividade.titulo,
             'id': atividade.id
         }
